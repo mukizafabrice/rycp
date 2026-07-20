@@ -6,9 +6,13 @@ declare(strict_types=1);
  * Sends mail using PHP's built-in mail() function, which is available
  * on virtually all cPanel / shared hosting accounts with no API key,
  * no external service, and no extra cost.
+ *
+ * Recipient is temporarily set to Caleb's personal inbox because the
+ * info@rycpcbc.org.rw mailbox has not been created in cPanel yet. Once
+ * it exists, change $recipient back to that address.
  */
 
-$recipient = 'info@rycpcbc.org.rw';
+$recipient = 'tumwebazecaleb250@gmail.com';
 $siteDomainFromAddress = 'no-reply@rycpcbc.org.rw';
 
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
