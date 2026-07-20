@@ -449,21 +449,13 @@
         <div class="footer-news">
           <h4>Stay in the Loop</h4>
           <p>Get news about trainings, exhibitions and market opportunities in your inbox.</p>
-          <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-netlify-ajax novalidate>
-            <input type="hidden" name="form-name" value="newsletter">
-            <p class="visually-hidden">
-              <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
-            </p>
+          <form data-demo novalidate>
             <label class="visually-hidden" for="footer-email">Email address</label>
             <input type="email" id="footer-email" name="email" placeholder="Your email address" required>
             <button class="btn btn--yellow" type="submit">Subscribe</button>
             <div class="form-success">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
               Thank you for subscribing. Talk soon!
-            </div>
-            <div class="form-error">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-              Something went wrong. Please try again in a moment.
             </div>
           </form>
         </div>
