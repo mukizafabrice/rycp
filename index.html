@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>RYCP Rwanda Community | Empowering Youth Entrepreneurs in Rwanda</title>
   <meta name="description" content="RYCP Rwanda Community is a youth led social enterprise in Kigali helping young entrepreneurs, women, farmers and creatives build businesses that grow and last.">
-  <link rel="icon" type="image/png" href="assets/img/logo.png">
+  <link rel="icon" type="image/png" href="assets/img/logo1.png">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -16,9 +16,9 @@
   <div class="topbar">
     <div class="container">
       <div class="topbar-contacts">
-        <a href="mailto:info@rycpcbc.org">
+        <a href="mailto:info@rycpcbc.org.rw">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
-          info@rycpcbc.org
+          info@rycpcbc.org.rw
         </a>
         <a href="contact.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -80,7 +80,7 @@
         <a class="btn btn--outline" href="contact.html">Talk to Us</a>
       </div>
       <div class="mobile-menu__contact">
-        <a href="mailto:info@rycpcbc.org">info@rycpcbc.org</a>
+        <a href="mailto:info@rycpcbc.org">info@rycpcbc.org.rw</a>
         <span>Kimisagara, Maison des Jeunes, Kigali</span>
       </div>
     </div>
@@ -495,13 +495,21 @@
         <div class="footer-news">
           <h4>Stay in the Loop</h4>
           <p>Get news about trainings, exhibitions and market opportunities in your inbox.</p>
-          <form data-demo novalidate>
+          <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-netlify-ajax novalidate>
+            <input type="hidden" name="form-name" value="newsletter">
+            <p class="visually-hidden">
+              <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+            </p>
             <label class="visually-hidden" for="footer-email">Email address</label>
             <input type="email" id="footer-email" name="email" placeholder="Your email address" required>
             <button class="btn btn--yellow" type="submit">Subscribe</button>
             <div class="form-success">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
               Thank you for subscribing. Talk soon!
+            </div>
+            <div class="form-error">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+              Something went wrong. Please try again in a moment.
             </div>
           </form>
         </div>

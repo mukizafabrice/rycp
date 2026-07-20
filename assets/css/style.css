@@ -952,6 +952,25 @@ body.menu-open { overflow: hidden; }
 .form-success.is-visible { display: flex; gap: 0.7rem; align-items: flex-start; }
 .form-success svg { width: 22px; height: 22px; flex: none; color: var(--green-600); margin-top: 2px; }
 
+.form-error {
+  display: none;
+  background: #fdeee2;
+  border: 1.5px solid #f4c19a;
+  color: #9a3b12;
+  border-radius: 14px;
+  padding: 1.1rem 1.3rem;
+  font-weight: 600;
+  margin-top: 1.2rem;
+}
+.form-error.is-visible { display: flex; gap: 0.7rem; align-items: flex-start; }
+.form-error svg { width: 22px; height: 22px; flex: none; color: var(--orange); margin-top: 2px; }
+
+.btn:disabled, .btn[disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
 /* ---------- Accordion / FAQ ---------- */
 
 .accordion { display: grid; gap: 0.9rem; }

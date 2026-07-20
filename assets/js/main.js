@@ -162,9 +162,66 @@
     onScrollTop();
   }
 
-  /* ---------- Demo form handling ----------
-     Forms show a success message locally. Connect them to your
-     email service or backend when the site goes live. */
+  /* ---------- Real form submissions via Netlify Forms ----------
+     No backend or API key needed: Netlify detects these forms at deploy
+     time because of the data-netlify attribute and the hidden form-name
+     field, then emails a notification for every submission. Submitting
+     with fetch instead of a normal page POST lets us show the success or
+     error message inline without leaving the page. */
+
+  document.querySelectorAll('form[data-netlify-ajax]').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      var success = form.querySelector('.form-success');
+      var error = form.querySelector('.form-error');
+      var submitBtn = form.querySelector('button[type="submit"]');
+      var originalLabel = submitBtn ? submitBtn.textContent : '';
+
+      if (error) error.classList.remove('is-visible');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+      }
+
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString()
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Submission failed');
+          if (success) {
+            success.classList.add('is-visible');
+            success.setAttribute('role', 'status');
+            success.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'nearest' });
+          }
+          form.reset();
+        })
+        .catch(function () {
+          if (error) {
+            error.classList.add('is-visible');
+            error.setAttribute('role', 'alert');
+            error.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'nearest' });
+          }
+        })
+        .finally(function () {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalLabel;
+          }
+        });
+    });
+  });
+
+  /* ---------- Local-only demo forms ----------
+     Reserved for forms with no real destination yet, such as the member
+     login form before the member portal exists. Shows a message locally
+     and never sends data anywhere. */
 
   document.querySelectorAll('form[data-demo]').forEach(function (form) {
     form.addEventListener('submit', function (e) {
