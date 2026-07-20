@@ -162,14 +162,15 @@
     onScrollTop();
   }
 
-  /* ---------- Real form submissions via Netlify Forms ----------
-     No backend or API key needed: Netlify detects these forms at deploy
-     time because of the data-netlify attribute and the hidden form-name
-     field, then emails a notification for every submission. Submitting
-     with fetch instead of a normal page POST lets us show the success or
-     error message inline without leaving the page. */
+  /* ---------- Real form submissions via contact.php ----------
+     Works on cPanel/shared hosting using PHP's built-in mail() function,
+     no API key or third-party service required. Submitting with fetch
+     instead of a normal page POST lets us show the success or error
+     message inline without leaving the page. If JavaScript is
+     unavailable, the form still works as a plain POST to contact.php,
+     which redirects back here with ?sent=1 or ?sent=0 (handled below). */
 
-  document.querySelectorAll('form[data-netlify-ajax]').forEach(function (form) {
+  document.querySelectorAll('form[data-php-form]').forEach(function (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!form.checkValidity()) {
@@ -188,13 +189,18 @@
         submitBtn.textContent = 'Sending...';
       }
 
-      fetch('/', {
+      fetch(form.getAttribute('action'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(form)).toString()
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: new FormData(form)
       })
         .then(function (response) {
-          if (!response.ok) throw new Error('Submission failed');
+          return response.json().then(function (data) {
+            return { ok: response.ok && data.status === 'ok' };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok) throw new Error('Submission failed');
           if (success) {
             success.classList.add('is-visible');
             success.setAttribute('role', 'status');
@@ -217,6 +223,20 @@
         });
     });
   });
+
+  /* No-JS fallback: contact.php redirects here with ?sent=1 or ?sent=0
+     after a plain form POST. Show the matching message on load. */
+  (function () {
+    var sent = new URLSearchParams(window.location.search).get('sent');
+    if (sent === null) return;
+    var form = document.querySelector('form[data-php-form]');
+    if (!form) return;
+    var box = form.querySelector(sent === '1' ? '.form-success' : '.form-error');
+    if (box) {
+      box.classList.add('is-visible');
+      box.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'nearest' });
+    }
+  })();
 
   /* ---------- Local-only demo forms ----------
      Reserved for forms with no real destination yet, such as the member

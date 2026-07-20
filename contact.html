@@ -154,8 +154,7 @@
         <div class="form-card reveal reveal-delay-1">
           <h3>Send us a message</h3>
           <p style="font-size: 0.95rem;">Tell us a bit about yourself and what you need. The more specific you are, the better we can help.</p>
-          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-netlify-ajax novalidate>
-            <input type="hidden" name="form-name" value="contact">
+          <form action="contact.php" method="POST" data-php-form novalidate>
             <p class="visually-hidden">
               <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
             </p>
