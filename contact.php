@@ -7,9 +7,15 @@ declare(strict_types=1);
  * on virtually all cPanel / shared hosting accounts with no API key,
  * no external service, and no extra cost.
  *
- * Recipient is temporarily set to Caleb's personal inbox because the
- * info@rycpcbc.org.rw mailbox has not been created in cPanel yet. Once
- * it exists, change $recipient back to that address.
+ * $recipient is the RYCP inbox that receives every submission.
+ *
+ * $siteDomainFromAddress is the From/envelope-sender address (see the -f
+ * flag below). It must stay a mailbox on our own domain -- it is NOT the
+ * visitor's address. Setting From to an arbitrary visitor email would fail
+ * SPF/DKIM and get the message rejected or spam-filtered by most providers.
+ * The visitor's own name and email (from the form) are instead put in
+ * Reply-To, so whoever reads the message in $recipient can just hit
+ * "Reply" and it goes straight back to the person who submitted the form.
  */
 
 // Never let a PHP warning/notice leak into the response body: the JS side
@@ -19,8 +25,8 @@ declare(strict_types=1);
 ini_set('display_errors', '0');
 error_reporting(E_ALL);
 
-$recipient = 'tumwebazecaleb250@gmail.com';
-$siteDomainFromAddress = 'no-reply@rycpcbc.org.rw';
+$recipient = 'info@rycpcbc.org.rw';
+$siteDomainFromAddress = 'info@rycpcbc.org.rw';
 
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
     && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -84,12 +90,12 @@ $headers = "From: RYCP Website <{$siteDomainFromAddress}>\r\n"
     . "Content-Transfer-Encoding: 8bit\r\n"
     . "X-Mailer: PHP/" . PHP_VERSION;
 
-// The -f flag sets the envelope sender (Return-Path) to a mailbox on our own
-// domain. Without it, cPanel's Exim defaults to something like
+// The -f flag sets the envelope sender (Return-Path) to a real mailbox on
+// our own domain. Without it, cPanel's Exim defaults to something like
 // "username@serverhostname", which fails SPF for rycpcbc.org.rw and is the
 // single most common reason PHP mail() from cPanel lands in spam or is
-// dropped outright by providers like Gmail. The address does not need an
-// inbox behind it, but its domain must be one this cPanel account owns.
+// dropped outright by providers like Gmail. Using info@rycpcbc.org.rw here
+// also means any bounce notices land in a real, monitored inbox.
 $envelopeSender = '-f' . $siteDomainFromAddress;
 
 $sent = @mail($recipient, $mailSubject, $body, $headers, $envelopeSender);
