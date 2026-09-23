@@ -12,6 +12,13 @@ declare(strict_types=1);
  * it exists, change $recipient back to that address.
  */
 
+// Never let a PHP warning/notice leak into the response body: the JS side
+// parses this endpoint's output as JSON, and even one stray HTML warning
+// (e.g. from mail() on a host with no local MTA configured) would break
+// that parse. Real errors still go to the server's error log below.
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+
 $recipient = 'tumwebazecaleb250@gmail.com';
 $siteDomainFromAddress = 'no-reply@rycpcbc.org.rw';
 
@@ -63,7 +70,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     respond(false, 'Please enter a valid email address.', $isAjax);
 }
 
-$mailSubject = 'RYCP website message: ' . $subject;
+$mailSubject = mb_encode_mimeheader('RYCP website message: ' . $subject, 'UTF-8');
 
 $body = "New message from the RYCP Rwanda Community website contact form.\n\n"
     . "Name: {$name}\n"
@@ -73,9 +80,26 @@ $body = "New message from the RYCP Rwanda Community website contact form.\n\n"
 
 $headers = "From: RYCP Website <{$siteDomainFromAddress}>\r\n"
     . "Reply-To: {$name} <{$email}>\r\n"
-    . "Content-Type: text/plain; charset=UTF-8\r\n";
+    . "Content-Type: text/plain; charset=UTF-8\r\n"
+    . "Content-Transfer-Encoding: 8bit\r\n"
+    . "X-Mailer: PHP/" . PHP_VERSION;
 
-$sent = @mail($recipient, $mailSubject, $body, $headers);
+// The -f flag sets the envelope sender (Return-Path) to a mailbox on our own
+// domain. Without it, cPanel's Exim defaults to something like
+// "username@serverhostname", which fails SPF for rycpcbc.org.rw and is the
+// single most common reason PHP mail() from cPanel lands in spam or is
+// dropped outright by providers like Gmail. The address does not need an
+// inbox behind it, but its domain must be one this cPanel account owns.
+$envelopeSender = '-f' . $siteDomainFromAddress;
+
+$sent = @mail($recipient, $mailSubject, $body, $headers, $envelopeSender);
+
+if (!$sent) {
+    // Log server-side for the host admin without leaking details to the visitor.
+    $lastError = error_get_last();
+    error_log('RYCP contact form: mail() returned false for recipient ' . $recipient
+        . ($lastError ? ' - ' . $lastError['message'] : ''));
+}
 
 respond(
     $sent,

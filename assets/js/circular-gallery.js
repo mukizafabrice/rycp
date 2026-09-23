@@ -247,10 +247,13 @@ class Media {
 }
 
 export class CircularGallery {
-  constructor(container, { items, bend = 3, textColor = '#ffffff', borderRadius = 0.05, font = 'bold 30px Space Grotesk, sans-serif', scrollSpeed = 2, scrollEase = 0.05 } = {}) {
+  constructor(container, { items, bend = 3, textColor = '#ffffff', borderRadius = 0.05, font = 'bold 30px Space Grotesk, sans-serif', scrollSpeed = 2, scrollEase = 0.05, onImageClick = null } = {}) {
     this.container = container;
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+    this.originalItems = items;
+    this.onImageClick = onImageClick;
+    this.dragDistance = 0;
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
@@ -299,18 +302,31 @@ export class CircularGallery {
   }
   onTouchDown(e) {
     this.isDown = true;
+    this.dragDistance = 0;
     this.scroll.position = this.scroll.current;
     this.start = e.touches ? e.touches[0].clientX : e.clientX;
   }
   onTouchMove(e) {
     if (!this.isDown) return;
     const x = e.touches ? e.touches[0].clientX : e.clientX;
+    this.dragDistance = Math.max(this.dragDistance, Math.abs(x - this.start));
     const distance = (this.start - x) * (this.scrollSpeed * 0.025);
     this.scroll.target = this.scroll.position + distance;
   }
   onTouchUp() {
+    if (!this.isDown) return;
     this.isDown = false;
     this.onCheck();
+    // A press-and-release with negligible movement is a click/tap, not a
+    // drag: open the image currently centered in view.
+    if (this.dragDistance < 6) this.openCentered();
+  }
+  openCentered() {
+    if (typeof this.onImageClick !== 'function' || !this.medias || !this.medias[0] || !this.originalItems.length) return;
+    const width = this.medias[0].width;
+    const rawIndex = Math.round(Math.abs(this.scroll.current) / width);
+    const realIndex = ((rawIndex % this.originalItems.length) + this.originalItems.length) % this.originalItems.length;
+    this.onImageClick(realIndex);
   }
   onWheel(e) {
     const delta = e.deltaY || e.wheelDelta || e.detail;
@@ -330,6 +346,9 @@ export class CircularGallery {
       e.preventDefault();
       this.scroll.target = 0;
       this.onCheckDebounce();
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.openCentered();
     }
   }
   onCheck() {

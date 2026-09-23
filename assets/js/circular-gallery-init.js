@@ -63,7 +63,10 @@
               borderRadius: 0.06,
               font: '600 26px "Space Grotesk", sans-serif',
               scrollSpeed: 1.6,
-              scrollEase: 0.06
+              scrollEase: 0.06,
+              onImageClick: function (index) {
+                if (window.RYCPLightbox) window.RYCPLightbox.open(items, index);
+              }
             });
             /* Keep the fallback grid's real <img alt> content in the accessibility
                tree (visually-hidden, not display:none) so screen reader users
