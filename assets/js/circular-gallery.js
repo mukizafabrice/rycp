@@ -3,7 +3,15 @@
    Falls back silently (see circular-gallery-init.js) when WebGL is unavailable
    or the visitor prefers reduced motion. */
 
-import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'https://unpkg.com/ogl@1.0.11/src/index.js';
+// Bundled locally (see assets/js/vendor/ogl.min.js) instead of importing the
+// unbundled ES module source from a CDN at runtime. ogl's package only ships
+// raw, un-bundled src/*.js files (no dist build), and its index.js re-exports
+// the whole library, so importing straight from unpkg meant 60+ separate
+// network round trips before the gallery could render -- the actual cause of
+// the multi-second delay before the animated gallery replaced the static
+// fallback grid. This single ~50KB file is one request, served from our own
+// origin, and cacheable by the browser like any other static asset.
+import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from './vendor/ogl.min.js';
 
 function lerp(p1, p2, t) {
   return p1 + (p2 - p1) * t;
