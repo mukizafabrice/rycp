@@ -163,7 +163,10 @@
           <p>Fill in the form below and our team will contact you within two working days to confirm your registration and payment details.</p>
         </div>
         <div class="form-card reveal" style="max-width: 860px; margin-inline: auto;">
-          <form data-demo novalidate>
+          <form action="register.php" method="POST" data-php-form novalidate>
+            <p class="visually-hidden">
+              <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+            </p>
             <div class="form-grid">
               <div class="form-field">
                 <label for="reg-name">Full Name <span class="req" aria-hidden="true">*</span></label>
@@ -238,6 +241,10 @@
             <div class="form-success">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
               Thank you for registering! We received your details and will contact you within two working days to complete your membership.
+            </div>
+            <div class="form-error">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+              Something went wrong sending your registration. Please try again or email us directly at info@rycpcbc.org.rw
             </div>
           </form>
         </div>
